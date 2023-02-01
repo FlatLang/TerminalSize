@@ -6,15 +6,20 @@ class {
   static Int DEFAULT_COLUMNS = 80
   static Int DEFAULT_LINES = 24
 
-  public static getTerminalSize() -> Int[] {
+  public static getTerminalSize() -> Dimensions => null {
     let native native_array Int[] values = getTerminalSize_native()
 
-    return [values[0], values[1]]
+    if (values) {
+      return Dimensions(
+        columns: values[0],
+        lines: values[1]
+      )
+    }
   }
 
   // Following code is based off of https://github.com/sindresorhus/term-size
   // refactored to handle non-ESM node and Flat conventions
-  static native native_array getTerminalSize_native() -> Int[] {
+  static native native_array getTerminalSize_native() -> Int[] => null {
     var native native_array String[] args
     var native String errorMessageData
 
