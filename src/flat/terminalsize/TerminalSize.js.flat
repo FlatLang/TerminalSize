@@ -3,9 +3,6 @@ package flat/terminalsize
 import flat/io
 
 class {
-  static Int DEFAULT_COLUMNS = 80
-  static Int DEFAULT_LINES = 24
-
   public static getTerminalSize() -> Dimensions => null {
     let native native_array Int[] values = getTerminalSize_native()
 
@@ -106,8 +103,7 @@ class {
         }
       }
 
-      #{log.debug("Could not find terminal dimensions. Returning default values")};
-      return [#{DEFAULT_COLUMNS}, #{DEFAULT_LINES}];
+      #{log.debug("Could not find terminal dimensions")};
     }
   }
 
