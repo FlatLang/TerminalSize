@@ -16,6 +16,7 @@ class {
   // refactored to handle non-ESM node and Flat conventions
   static native native_array getTerminalSize_native() -> Int[] {
     var native native_array String[] args
+    var native String errorMessageData
 
     external {
       const {env, stdout, stderr} = process;
@@ -46,7 +47,10 @@ class {
             #{log.debug("Found terminal dimensions from term-size.exe")};
             return [parseInt(size[0]), parseInt(size[1])];
           }
-        } catch {}
+        } catch (e) {
+          #{errorMessageData} = e.message || "";
+          #{log.debug("Encountered error: " + String(errorMessageData))};
+        }
       } else {
         if (process.platform === "darwin") {
           try {
@@ -58,7 +62,10 @@ class {
               #{log.debug("Found terminal dimensions from macos term-size")};
               return [parseInt(size[0]), parseInt(size[1])];
             }
-          } catch {}
+          } catch (e) {
+            #{errorMessageData} = e.message || "";
+            #{log.debug("Encountered error: " + String(errorMessageData))};
+          }
         }
 
         // `resize` is preferred as it works even when all file descriptors are redirected
@@ -71,7 +78,10 @@ class {
             #{log.debug("Found terminal dimensions from resize")};
             return [parseInt(size[0]), parseInt(size[1])];
           }
-        } catch {}
+        } catch (e) {
+          #{errorMessageData} = e.message || "";
+          #{log.debug("Encountered error: " + String(errorMessageData))};
+        }
 
         if (process.env.TERM) {
           try {
@@ -84,7 +94,10 @@ class {
               #{log.debug("Found terminal dimensions from tput")};
               return [parseInt(columns), parseInt(rows)];
             }
-          } catch {}
+          } catch (e) {
+            #{errorMessageData} = e.message || "";
+            #{log.debug("Encountered error: " + String(errorMessageData))};
+          }
         }
       }
 
@@ -99,12 +112,14 @@ class {
     }
   }
 
-  static native execNative(native String command, Bool shell) -> String {
+  static native execNative(String command, Bool shell) -> String {
     var native String commandData
     var native native_array String[] args
 
     external {
-      #{commandData} = #{TerminalSizeGlobal.path}.join(#{File.EXECUTED_DIRECTORY.location.chars.data}, #{command});
+      #{log.debug("before")};
+      #{commandData} = #{TerminalSizeGlobal.path}.join(#{File.EXECUTED_DIRECTORY.location.chars.data}, #{command.chars.data});
+      #{log.debug("Executing " + String(commandData))};
       #{args} = [];
       return #{exec(commandData, args, shell)}.split(/\r?\n/);
     }
