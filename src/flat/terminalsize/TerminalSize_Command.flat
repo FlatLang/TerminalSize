@@ -3,8 +3,8 @@ package flat/terminalsize
 import flat/log
 
 class {
-  public static main(String[] args) {
-    Logger.setLoggingLevel(TerminalSize.class, Logger.DEBUG)
-    Console.log(TerminalSize.getTerminalSize())
-  }
+    public static main(String[] args) {
+        Logger.setLoggingLevel(TerminalSize.class, Logger.DEBUG)
+        Console.log(TerminalSize.getTerminalSize())
+    }
 }
